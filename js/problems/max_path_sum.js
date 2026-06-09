@@ -51,7 +51,7 @@ export function maxPathSumDP(grid) {
   }
 
   // Line 16: Return result
-  steps.push({ type: "end", line: 16, i: n - 1, j: m - 1, val: dp[n - 1][m - 1] });
+  steps.push({ type: "end", line: 13, i: n - 1, j: m - 1, val: dp[n - 1][m - 1] });
 
   return {
     result: dp[n - 1][m - 1],

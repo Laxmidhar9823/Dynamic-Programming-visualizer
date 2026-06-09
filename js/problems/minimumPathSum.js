@@ -34,7 +34,7 @@ export function minimumPathSumDP(grid) {
     }
   }
 
-  steps.push({ type: "end", i: n - 1, j: m - 1, val: dp[n - 1][m - 1], line: 16 });
+  steps.push({ type: "end", i: n - 1, j: m - 1, val: dp[n - 1][m - 1], line: 13 });
 
   return {
     result: dp[n - 1][m - 1],
