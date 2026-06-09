@@ -70,29 +70,7 @@ Open `index.html` directly in any modern browser — or use VS Code's Live Serve
 
 The app is organized into three layers. Problem solvers are completely isolated from the visualizer — adding a new algorithm never touches playback logic.
 
-```
-┌─────────────────────────────────────────────────────┐
-│                     index.html                      │
-│          DOM structure + script/link tags           │
-└───────────────┬─────────────────────────────────────┘
-                │ ES6 module imports
-┌───────────────▼─────────────────────────────────────┐
-│                     js/main.js                      │
-│  Wires controls → solvers → visualizer              │
-│  Owns: problem metadata, INPUT_CONFIG,              │
-│        theme init, keyboard shortcuts               │
-└──────┬──────────────────────────────┬───────────────┘
-       │                              │
-┌──────▼──────────┐        ┌──────────▼──────────────┐
-│ js/problems/*.js│        │    js/visualizer.js      │
-│                 │        │                          │
-│ One file per    │        │ Playback engine:         │
-│ algorithm.      │        │ grid rendering, timing,  │
-│                 │        │ code-line sync,          │
-│ Input  → algo   │        │ button state machine,    │
-│ Output → steps[]│        │ axis labels, result panel│
-└─────────────────┘        └──────────────────────────┘
-```
+![Architecture diagram](assets/architecture.png)
 
 **Data flow for a single run:**
 
