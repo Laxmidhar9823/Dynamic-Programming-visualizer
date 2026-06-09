@@ -276,6 +276,18 @@ function getPartitionCode() {
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+function formatGridPreview(grid) {
+  const rows = grid.slice(0, 2).map(r => `[${r.join(',')}]`).join(', ');
+  return grid.length > 2 ? `[${rows}, …]` : `[${rows}]`;
+}
+
+function updateExampleBox(inputStr, outputStr) {
+  document.getElementById("problemExample").innerHTML =
+    `<span class="example-label">Example</span>` +
+    `<span class="example-io"><span class="example-key">Input:</span> ${inputStr}</span>` +
+    `<span class="example-io"><span class="example-key">Output:</span> ${outputStr}</span>`;
+}
+
 function formatGrid(grid) {
   return `<table class="input-grid-table">` +
     grid.map(row =>
@@ -400,6 +412,17 @@ window.addEventListener("DOMContentLoaded", () => {
   initTheme();
   initKeyboardShortcuts();
 
+  // "New Example" button: randomize inputs for the current problem, then re-run
+  document.addEventListener("dp:newExample", () => {
+    const key    = problemSelect.value;
+    const fields = INPUT_CONFIG[key] ?? [];
+    fields.forEach(f => {
+      const el = document.getElementById(f.id);
+      if (el) el.value = Math.floor(Math.random() * (f.max - f.min + 1)) + f.min;
+    });
+    document.getElementById("startBtn").click();
+  });
+
   const problemSelect = document.getElementById("problem");
   const speedSlider   = document.getElementById("speedSlider");
   const speedLabelEl  = document.getElementById("speedLabel");
@@ -433,6 +456,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
     if (problem === "uniquePaths") {
       const { result: answer, steps } = uniquePathsDP(m, n);
+      updateExampleBox(`m = ${m}, n = ${n}`, answer);
       const code = getUniquePathsCode();
       highlightCode(code);
       initVisualizer({
@@ -449,6 +473,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const grid = Array.from({ length: m }, () =>
         Array.from({ length: n }, () => Math.floor(Math.random() * 9) + 1));
       const { result: answer, steps } = minimumPathSumDP(grid);
+      updateExampleBox(`grid = ${formatGridPreview(grid)}`, answer);
       highlightCode(getMinimumPathSumCode());
       document.getElementById("inputGridPanel").innerHTML = `<h3>Input Grid</h3>${formatGrid(grid)}`;
       initVisualizer({
@@ -464,6 +489,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const grid = Array.from({ length: m }, () =>
         Array.from({ length: n }, () => Math.floor(Math.random() * 9) + 1));
       const { result: answer, steps } = maxPathSumDP(grid);
+      updateExampleBox(`grid = ${formatGridPreview(grid)}`, answer);
       highlightCode(getMaxPathSumCode());
       document.getElementById("inputGridPanel").innerHTML = `<h3>Input Grid</h3>${formatGrid(grid)}`;
       initVisualizer({
@@ -478,6 +504,7 @@ window.addEventListener("DOMContentLoaded", () => {
     } else if (problem === "climbingStairs") {
       const stairCount = Math.max(2, n);
       const { result: answer, steps } = climbingStairsDP(stairCount);
+      updateExampleBox(`n = ${stairCount}`, answer);
       highlightCode(getClimbingStairsCode());
       document.getElementById("inputGridPanel").innerHTML = `
         <h3>Input</h3>
@@ -494,6 +521,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const houseCount = Math.max(2, n);
       const nums = Array.from({ length: houseCount }, () => Math.floor(Math.random() * 9) + 1);
       const { result: answer, steps } = houseRobberDP(nums);
+      updateExampleBox(`nums = [${nums.join(', ')}]`, answer);
       highlightCode(getHouseRobberCode());
       document.getElementById("inputGridPanel").innerHTML = `<h3>Houses</h3>${formatGrid([nums])}`;
       initVisualizer({
@@ -511,6 +539,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const s1 = Array.from({ length: len1 }, () => CHARS[Math.floor(Math.random() * CHARS.length)]).join("");
       const s2 = Array.from({ length: len2 }, () => CHARS[Math.floor(Math.random() * CHARS.length)]).join("");
       const { result: answer, steps } = lcsDP(s1, s2);
+      updateExampleBox(`s1 = "${s1}", s2 = "${s2}"`, answer);
       highlightCode(getLCSCode());
       document.getElementById("inputGridPanel").innerHTML = `
         <h3>Strings</h3>
@@ -529,6 +558,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const coins  = [1, 2, 5];
       const amount = Math.floor(Math.random() * 20) + 1;
       const { result: answer, steps } = coinChangeDP(coins, amount);
+      updateExampleBox(`coins = [${coins.join(', ')}], amount = ${amount}`, answer === -1 ? 'No solution' : answer);
       highlightCode(getCoinChangeCode());
       document.getElementById("inputGridPanel").innerHTML = `
         <h3>Input</h3>
@@ -549,6 +579,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const values   = [1, 4, 5, 7];
       const capacity = 7;
       const { result: answer, steps } = knapsackDP(weights, values, capacity);
+      updateExampleBox(`weights=[1,3,4,5], values=[1,4,5,7], W=${capacity}`, answer);
       highlightCode(getKnapsackCode());
       document.getElementById("inputGridPanel").innerHTML =
         `<h3>Items</h3>` +
@@ -571,6 +602,7 @@ window.addEventListener("DOMContentLoaded", () => {
       const nums   = raw;
       const target = nums.reduce((a, b) => a + b, 0) >> 1;
       const { result: answer, steps } = partitionSubsetDP(nums);
+      updateExampleBox(`nums = [${nums.join(', ')}]`, answer ? 'True' : 'False');
       highlightCode(getPartitionCode());
       document.getElementById("inputGridPanel").innerHTML = `
         <h3>Input</h3>

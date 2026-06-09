@@ -203,7 +203,7 @@ function showResult() {
   `;
 
   document.getElementById("replayBtn").addEventListener("click", () => {
-    document.getElementById("startBtn").click();
+    document.dispatchEvent(new CustomEvent("dp:newExample"));
   });
 }
 
