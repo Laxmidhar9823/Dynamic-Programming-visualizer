@@ -19,7 +19,7 @@ Watch the DP table fill in real time, follow along with synchronized Python 3 co
     <td width="50%"><img src="assets/light-mode.png" alt="House Robber in light mode with result panel" /></td>
     <td width="50%" valign="middle">
       <strong>Same engine, two themes, nine problems.</strong><br/><br/>
-      Every run uses freshly randomized input, every step highlights the matching line of Python, and the entire UI — including the theme — persists across sessions.
+      Every run uses freshly randomized input, every step highlights the matching line of Python, and your theme choice is remembered the next time you visit.
     </td>
   </tr>
 </table>
@@ -119,6 +119,24 @@ The app is organized into three layers. Problem solvers are completely isolated 
 2. Add an `<option>` to the `<select>` in `index.html`
 3. Add a `case` in `main.js` to call your solver and pass the result to `initVisualizer`
 4. Add an entry to `INPUT_CONFIG` (if the problem has configurable dimensions) and `COMPLEXITY`
+
+---
+
+## Design Decisions
+
+A few choices in this codebase weren't arbitrary — they're the answers I'd actually give if asked about them.
+
+**Pre-computed step traces instead of live algorithm execution.** Each solver runs its DP algorithm to completion up front and returns the entire animation as plain data — an array of `{ i, j, val, type, line }` records — instead of the visualizer stepping through the algorithm's execution live (e.g. via a generator `function*` yielding at each cell write). This costs a small amount of memory (at most a few thousand records for the largest grids) in exchange for total decoupling: `visualizer.js` never touches algorithm logic, can change speed or pause without re-running anything, and the exact same `setInterval` loop drives all 9 different algorithms identically. A generator-based approach would avoid materializing the array but couples the visualizer's timing model to a consume-once generator and makes a future "jump to step N" scrubber much harder, since a generator can't be rewound.
+
+**No framework — three flat ES6 modules instead of component state.** `main.js` (orchestration), `visualizer.js` (playback), and `js/problems/*.js` (solvers) talk to each other through plain function calls and one custom event — no React, no virtual DOM. DOM updates are imperative (`classList.add`, `innerText`), which trades declarative convenience for direct control: a DP animation can write to 50+ cells a second, and patching only the cells that change is cheaper here than diffing a virtual DOM tree every frame. It also keeps the project at zero build steps, which matters more for a project meant to be opened and read than shipped at scale.
+
+**`CustomEvent` instead of a direct import for cross-module signaling.** The "↺ New Example" button is rendered inside `visualizer.js`'s result panel, but the logic for randomizing inputs belongs to `main.js` (it owns `INPUT_CONFIG`). Importing one module into the other would create a circular dependency between the two highest-level modules in the app. Instead, the click handler does `document.dispatchEvent(new CustomEvent("dp:newExample"))`, and `main.js` listens for it. One extra layer of indirection buys a playback engine that stays completely ignorant of problem-specific configuration.
+
+**The step-record schema is an enforced runtime contract, not a type.** `{ i, j, val, type, line }` is the interface every solver and the renderer agree on, but it's plain JS objects — no TypeScript, no JSON schema, no build step to run a type checker in. Instead the contract is enforced at the boundary: `tests/helpers.js`'s `assertValidSteps()` runtime-checks every step emitted by every solver in CI. Writing that check against the real solvers surfaced an actual inconsistency — `partitionSubset.js`'s success path ends on a step typed `"visited"` instead of `"end"` like every other solver. It's left as-is and documented here rather than silently patched, because the visualizer doesn't depend on the last step's type and "fix it cleanly later" is a more honest state than "pretend it was never there."
+
+**The code panel ignores the active theme on purpose.** `--bg-code` resolves to the same dark value in both `:root` and `[data-theme="light"]` (`CSS/style.css`) — the Python panel stays dark even when the rest of the UI switches to light mode. Prism's `prism-tomorrow` theme, and the line-highlight colors built around it, are tuned for a dark background; re-theming syntax highlighting for light mode would mean shipping and maintaining a second Prism theme and a second highlight-color set for a panel most people read in short bursts. Keeping code panels dark regardless of UI theme is the same call VS Code and GitHub make for embedded code blocks.
+
+**Theme persists indefinitely; panel width persists only for the session.** The dark/light choice is saved to `localStorage` and follows you across visits. The split-pane width, dragged via a hand-rolled `mousedown`/`mousemove`/`mouseup` listener in `js/resizer.js` (no drag library), is saved to `sessionStorage` and resets when the tab closes. Theme is a standing reading preference; pane width is tied to the current window size, and restoring a width chosen on a wide monitor onto a laptop the next day would silently produce a broken-looking layout. Scoping it to the session avoids that failure mode without writing viewport-aware persistence logic.
 
 ---
 
