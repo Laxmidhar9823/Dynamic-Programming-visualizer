@@ -8,7 +8,17 @@ Watch the DP table fill in real time, follow along with synchronized Python 3 co
 
 ---
 
-![DP Visualizer demo](assets/demo.gif)
+![DP Visualizer — Minimum Path Sum animating in dark mode](assets/dark-mode.png)
+
+<table>
+  <tr>
+    <td width="50%"><img src="assets/light-mode.png" alt="House Robber in light mode with result panel" /></td>
+    <td width="50%" valign="middle">
+      <strong>Same engine, two themes, nine problems.</strong><br/><br/>
+      Every run uses freshly randomized input, every step highlights the matching line of Python, and the entire UI — including the theme — persists across sessions.
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -89,21 +99,6 @@ The app is organized into three layers. Problem solvers are completely isolated 
 2. Add an `<option>` to the `<select>` in `index.html`
 3. Add a `case` in `main.js` to call your solver and pass the result to `initVisualizer`
 4. Add an entry to `INPUT_CONFIG` (if the problem has configurable dimensions) and `COMPLEXITY`
-
----
-
-## Screenshots
-
-<table>
-  <tr>
-    <td><img src="assets/dark-mode.png" alt="Dark mode — Minimum Path Sum mid-animation" /></td>
-    <td><img src="assets/light-mode.png" alt="Light mode — House Robber with result panel" /></td>
-  </tr>
-  <tr>
-    <td align="center">Dark mode — grid problem mid-animation</td>
-    <td align="center">Light mode — linear problem with result panel</td>
-  </tr>
-</table>
 
 ---
 
