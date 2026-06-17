@@ -1,0 +1,13 @@
+{
+  "name": "dp-visualizer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Interactive Dynamic Programming visualizer with synchronized Python code highlighting.",
+  "scripts": {
+    "test": "node --test tests/"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -4,7 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Running the App
 
-No build step required. Open `index.html` directly in a browser (or use a local static server like VS Code Live Server). There is no package manager, no dependencies to install, and no tests.
+No build step required. Open `index.html` directly in a browser (or use a local static server like VS Code Live Server). There is no package manager and no dependencies to install for the app itself.
+
+## Running Tests
+
+`npm test` runs the solver test suite (`tests/*.test.js`) via Node's built-in test runner (`node:test`) — zero npm dependencies. Each of the 9 `js/problems/*.js` solvers is tested for correct output and for emitting a well-formed step trace. CI runs this on every push and pull request (`.github/workflows/test.yml`).
+
+When adding a new problem, add a matching `tests/yourProblem.test.js` that asserts the result against at least one known-correct case and calls `assertValidSteps(steps)` from `tests/helpers.js`.
 
 ## Architecture
 

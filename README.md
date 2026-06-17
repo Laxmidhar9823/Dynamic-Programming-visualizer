@@ -1,5 +1,9 @@
 # DP Visualizer
 
+[![Tests](https://github.com/Laxmidhar9823/Dynamic-Programming-visualizer/actions/workflows/test.yml/badge.svg)](https://github.com/Laxmidhar9823/Dynamic-Programming-visualizer/actions/workflows/test.yml)
+[![Deploy](https://github.com/Laxmidhar9823/Dynamic-Programming-visualizer/actions/workflows/deploy.yml/badge.svg)](https://github.com/Laxmidhar9823/Dynamic-Programming-visualizer/actions/workflows/deploy.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 **Step-by-step Dynamic Programming animations, built with vanilla JavaScript.**
 
 Watch the DP table fill in real time, follow along with synchronized Python 3 code highlighting, and explore nine classic problems — all in a zero-dependency, zero-build-step web app.
@@ -75,6 +79,22 @@ cd Dynamic-Programming-visualizer
 ```
 
 Open `index.html` directly in any modern browser — or use VS Code's Live Server extension for auto-reload during development. No `npm install`, no compilation, no config.
+
+---
+
+## Testing
+
+Each of the 9 DP solvers in `js/problems/` is a pure function (`input → { result, steps }`), tested with Node's built-in test runner — no Jest, no Vitest, no dependencies to install.
+
+```bash
+npm test
+```
+
+For every problem, the suite checks:
+- The final answer against a known correct value (LeetCode examples plus hand-picked edge cases)
+- That the generated step trace is well-formed — every step has a valid type (`processing` / `start` / `visited` / `end`) and a numeric code line, the contract `js/visualizer.js` relies on to drive playback
+
+Tests run automatically on every push and pull request via [GitHub Actions](.github/workflows/test.yml).
 
 ---
 
