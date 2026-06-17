@@ -4,6 +4,8 @@
 
 Watch the DP table fill in real time, follow along with synchronized Python 3 code highlighting, and explore nine classic problems — all in a zero-dependency, zero-build-step web app.
 
+### [▶ Live Demo](https://laxmidhar9823.github.io/Dynamic-Programming-visualizer/)
+
 ---
 
 ![DP Visualizer demo](assets/demo.gif)
